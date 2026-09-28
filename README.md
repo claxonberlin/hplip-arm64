@@ -1,5 +1,7 @@
 # hplip-arm64: HP DeskJet 5900 series driver for Apple silicon Macs
 
+> This project is human designed and fully coded by [Claude](https://claude.com/claude-code).
+
 This is a native **arm64** build of HP's open-source `hpcups` CUPS filter
 (from [HPLIP](https://developers.hp.com/hp-linux-imaging-and-printing) 3.26.6)
 for the **HP DeskJet 5938 / 5940 / 5940xi / 5943**. HP's own macOS driver for
