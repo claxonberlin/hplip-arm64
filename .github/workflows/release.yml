@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: macos-15   # Apple silicon
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build hpcups
         run: ./build.sh
@@ -33,7 +33,7 @@ jobs:
           [[ "$GITHUB_REF" == refs/tags/v* ]] || VERSION="0.0.0-dev"
           ./pkg/make-pkg.sh "$VERSION"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: hplip-arm64-pkg
           path: out/*
