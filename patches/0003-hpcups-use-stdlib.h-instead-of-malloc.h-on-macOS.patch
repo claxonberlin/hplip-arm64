@@ -1,0 +1,28 @@
+From 9330a8d7a4cce66b8d410b8ac0bfdf160aab141d Mon Sep 17 00:00:00 2001
+From: Claxon <25482509+claxonberlin@users.noreply.github.com>
+Date: Mon, 28 Sep 2026 16:27:47 +0200
+Subject: [PATCH] hpcups: use <stdlib.h> instead of <malloc.h> on macOS
+
+macOS has no <malloc.h>; malloc/free are declared in <stdlib.h>.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ prnt/hpcups/genJPEGStrips.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/prnt/hpcups/genJPEGStrips.cpp b/prnt/hpcups/genJPEGStrips.cpp
+index b0f0d34..8584005 100644
+--- a/prnt/hpcups/genJPEGStrips.cpp
++++ b/prnt/hpcups/genJPEGStrips.cpp
+@@ -28,7 +28,11 @@ extern "C"
+ 
+ #include <setjmp.h>
+ 
++#ifdef __APPLE__
++#include <stdlib.h>
++#else
+ #include <malloc.h>
++#endif
+ #include <memory.h>
+ 
+ 

@@ -1,0 +1,45 @@
+From a272363e743b79c60217ed13126c363829232ed5 Mon Sep 17 00:00:00 2001
+From: Claxon <25482509+claxonberlin@users.noreply.github.com>
+Date: Mon, 28 Sep 2026 16:27:47 +0200
+Subject: [PATCH] hpcups: build common/utils.c via a distinctly named wrapper
+
+Automake names objects after the source basename, so common/utils.c and
+prnt/hpcups/Utils.cpp both became hpcups-{u,U}tils.o, which is one file on
+case-insensitive filesystems; the link then failed with missing symbols.
+Compile common/utils.c through prnt/hpcups/hpcups_common_utils.c instead.
+build.sh regenerates Makefile.in with autoreconf.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ Makefile.am                       | 2 +-
+ prnt/hpcups/hpcups_common_utils.c | 8 ++++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+ create mode 100644 prnt/hpcups/hpcups_common_utils.c
+
+diff --git a/Makefile.am b/Makefile.am
+index a03eb4e..5647a3c 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -598,7 +598,7 @@ hpcups_SOURCES = prnt/hpcups/HPCupsFilter.cpp prnt/hpcups/HPCupsFilter.h prnt/hp
+ 	prnt/hpcups/Hbpl1.cpp prnt/hpcups/Hbpl1.h prnt/hpcups/Hbpl1_Wrapper.h prnt/hpcups/PCLmGenerator.h \
+ 	prnt/hpcups/flate_colorspace.h prnt/hpcups/RunLenEncoding.h prnt/hpcups/common_defines.h \
+ 	prnt/hpcups/genPCLm.h \
+-	common/utils.c common/utils.h prnt/hpcups/Hbpl1_Wrapper.cpp prnt/hpcups/genPCLm.cpp \
++	prnt/hpcups/hpcups_common_utils.c common/utils.h prnt/hpcups/Hbpl1_Wrapper.cpp prnt/hpcups/genPCLm.cpp \
+ 	prnt/hpcups/genJPEGStrips.cpp prnt/hpcups/RunLenEncoding.cpp \
+ 	prnt/hpcups/ImageProcessor.h
+ 
+diff --git a/prnt/hpcups/hpcups_common_utils.c b/prnt/hpcups/hpcups_common_utils.c
+new file mode 100644
+index 0000000..7ff7e82
+--- /dev/null
++++ b/prnt/hpcups/hpcups_common_utils.c
+@@ -0,0 +1,8 @@
++/*
++ * Build common/utils.c under a distinct object name.
++ *
++ * Automake names objects after the source basename, so common/utils.c and
++ * prnt/hpcups/Utils.cpp become hpcups-utils.o and hpcups-Utils.o, which are
++ * the same file on case-insensitive filesystems (default on macOS).
++ */
++#include "../../common/utils.c"

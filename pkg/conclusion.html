@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>body{font:13px -apple-system,sans-serif;line-height:1.45}code{font-size:12px}</style></head>
+<body>
+<h2>Next: add the printer</h2>
+<ol>
+<li>Connect the printer by USB. Open <b>System Settings → Printers &amp; Scanners → Add Printer</b>.</li>
+<li>Select the DeskJet 5900 series. Under <b>Use</b>, choose <b>Select Software…</b> and pick
+<b>HP Deskjet 5900 Series, hpcups 3.26.6 (arm64)</b>.</li>
+</ol>
+<h3>Queue pauses with "Unable to use legacy USB class driver."?</h3>
+<p>An old HP driver on this Mac left kexts in <code>/Library/Extensions</code> that force the printer onto an Intel-only
+USB plugin. To check, and fix it if needed, run this in Terminal:</p>
+<p><code>/Library/Printers/hplip-arm64/fix-hp-usb-classdriver.sh</code><br>
+<code>sudo /Library/Printers/hplip-arm64/fix-hp-usb-classdriver.sh --fix</code></p>
+<p>Then reboot. You can undo it with <code>--restore</code>.</p>
+<p>To uninstall: <code>sudo /Library/Printers/hplip-arm64/uninstall.sh</code></p>
+</body></html>

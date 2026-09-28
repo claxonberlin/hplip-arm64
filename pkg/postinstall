@@ -1,0 +1,19 @@
+#!/bin/bash
+# Runs as root after the payload is in /Library/Printers/hplip-arm64.
+PREFIX=/Library/Printers/hplip-arm64
+RES=/Library/Printers/PPDs/Contents/Resources
+UI_PPD="$RES/HP Deskjet 5900 Series hpcups arm64.ppd.gz"
+
+# cupsd refuses filters that aren't root-owned / are group- or world-writable.
+chown -R root:wheel "$PREFIX"
+chmod 755 "$PREFIX" "$PREFIX/filter" "$PREFIX/filter/hpcups"
+
+# Make the PPD show up in System Settings > Add Printer > Use: Select Software.
+if [ -d "$RES" ]; then
+    gzip -9 -c "$PREFIX/ppd/hp-deskjet_5900_series.ppd" > "$UI_PPD"
+    chown root:wheel "$UI_PPD"; chmod 644 "$UI_PPD"
+fi
+
+# Log (to /var/log/install.log) whether the legacy HP class-driver problem applies.
+"$PREFIX/fix-hp-usb-classdriver.sh" --check || true
+exit 0

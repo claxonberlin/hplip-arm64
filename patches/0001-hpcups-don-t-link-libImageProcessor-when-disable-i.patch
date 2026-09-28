@@ -1,0 +1,33 @@
+From 54f37c658752ccdd378c346629dda2b07ac07dca Mon Sep 17 00:00:00 2001
+From: Claxon <25482509+claxonberlin@users.noreply.github.com>
+Date: Mon, 28 Sep 2026 16:26:03 +0200
+Subject: [PATCH] hpcups: don't link libImageProcessor when
+ --disable-imageProcessor-build
+
+libImageProcessor ships only as prebuilt x86 Linux .so files, so it cannot
+be linked into a native arm64 macOS binary. configure already defines
+DISABLE_IMAGEPROCESSOR (and HPCupsFilter.cpp honours it), but Makefile.am
+linked -lImageProcessor unconditionally. Use the existing
+DISBALE_IMAGEPROCESSOR_BUILD conditional to drop it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ Makefile.am | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Makefile.am b/Makefile.am
+index ccd4eff..a03eb4e 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -605,7 +605,11 @@ hpcups_SOURCES = prnt/hpcups/HPCupsFilter.cpp prnt/hpcups/HPCupsFilter.h prnt/hp
+ hpcups_CPPFLAGS = -I$(srcdir)/prnt/hpcups -I$(srcdir)/prnt -I$(srcdir)/common -D_GNU_SOURCE
+ hpcups_CXXFLAGS = $(APDK_ENDIAN_FLAG) $(DBUS_CFLAGS) $(AM_CXXFLAGS)
+ hpcups_LDFLAGS = $(AM_LDFLAGS)
++if DISBALE_IMAGEPROCESSOR_BUILD
++hpcups_LDADD = -ljpeg -ldl -lcups -lcupsimage -lz $(DBUS_LIBS)
++else
+ hpcups_LDADD = -L./prnt/hpcups/ -ljpeg -ldl -lImageProcessor -lcups -lcupsimage -lz $(DBUS_LIBS)
++endif
+ #else
+ #hpcupsdir = $(cupsfilterdir)
+ #hpcups_PROGRAMS = hpcups

@@ -1,0 +1,54 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15   # Apple silicon
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build hpcups
+        run: ./build.sh
+
+      - name: Offline test (PDF -> raster -> PCL3GUI)
+        run: |
+          sed "s|/Library/Printers/hplip-arm64/filter/hpcups|$PWD/dist/filter/hpcups|" dist/ppd/hp-deskjet_5900_series.ppd > "$RUNNER_TEMP/local.ppd"
+          cupsfilter -m application/pdf README.md > "$RUNNER_TEMP/test.pdf" 2>/dev/null
+          cupsfilter -p "$RUNNER_TEMP/local.ppd" -e -m printer/foo "$RUNNER_TEMP/test.pdf" > "$RUNNER_TEMP/test.pcl"
+          head -c 64 "$RUNNER_TEMP/test.pcl" | grep -a -q '@PJL'
+          python3 -c "import re,sys; d=open(sys.argv[1],'rb').read(); n=len(re.findall(rb'\x1b\*b\d+[WV]',d)); print(n,'raster rows'); sys.exit(n==0)" "$RUNNER_TEMP/test.pcl"
+
+      - name: Package
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          [[ "$GITHUB_REF" == refs/tags/v* ]] || VERSION="0.0.0-dev"
+          ./pkg/make-pkg.sh "$VERSION"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hplip-arm64-pkg
+          path: out/*
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "See README for install steps."
+          fi
+          # Don't replace assets that were uploaded (and tested) by hand.
+          if [ "$(gh release view "$GITHUB_REF_NAME" --json assets --jq '.assets | length')" = 0 ]; then
+            gh release upload "$GITHUB_REF_NAME" out/*
+          else
+            echo "Release already has assets; CI build kept as workflow artifact only."
+          fi

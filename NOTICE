@@ -1,0 +1,15 @@
+hplip-arm64 builds the hpcups filter and uses a PPD from HPLIP 3.26.6
+(HP Linux Imaging and Printing), https://developers.hp.com/hp-linux-imaging-and-printing
+Source: https://sourceforge.net/projects/hplip/files/hplip/3.26.6/
+
+HPLIP is Copyright (c) 2001-2015 HP Development Company, L.P. and is
+distributed under the GNU General Public License version 2 (see LICENSE);
+some hpcups source files additionally carry HP's BSD-style notice, which is
+retained in the HPLIP sources that build.sh downloads.
+
+The patches in patches/, the build and packaging scripts, and the helper
+scripts in this repository are released under GPL-2.0-or-later.
+
+Binary releases are built by build.sh from the unmodified HPLIP 3.26.6
+tarball (SHA-256 5fb2235a9cb6ec07cb4786c4066b151359c301324d54aaabf69ae7eef35606b3)
+plus the patches in patches/.

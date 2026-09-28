@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+    <title>HP DeskJet 5900 series driver (hpcups, Apple silicon)</title>
+    <welcome file="welcome.html" mime-type="text/html"/>
+    <license file="LICENSE.txt"/>
+    <conclusion file="conclusion.html" mime-type="text/html"/>
+    <options customize="never" require-scripts="false" hostArchitectures="arm64"/>
+    <domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true"/>
+    <volume-check>
+        <allowed-os-versions>
+            <os-version min="13.0"/>
+        </allowed-os-versions>
+    </volume-check>
+    <choices-outline>
+        <line choice="default"/>
+    </choices-outline>
+    <choice id="default" title="hplip-arm64">
+        <pkg-ref id="@PKG_ID@"/>
+    </choice>
+    <pkg-ref id="@PKG_ID@" version="@VERSION@" onConclusion="none">hplip-arm64-component.pkg</pkg-ref>
+</installer-gui-script>

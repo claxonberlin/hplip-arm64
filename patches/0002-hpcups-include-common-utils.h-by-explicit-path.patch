@@ -1,0 +1,111 @@
+From 6baa4e7bffc5a9c7659d412e673132aa446bfac5 Mon Sep 17 00:00:00 2001
+From: Claxon <25482509+claxonberlin@users.noreply.github.com>
+Date: Mon, 28 Sep 2026 16:27:47 +0200
+Subject: [PATCH] hpcups: include common/utils.h by explicit path
+
+On case-insensitive filesystems (macOS default), #include "utils.h" from
+prnt/hpcups/ resolves to prnt/hpcups/Utils.h instead of common/utils.h,
+hiding CUPS_TMP_DIR, IsChromeOs, getHPLogLevel, load_plugin_library etc.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ prnt/hpcups/HPCupsFilter.cpp   | 2 +-
+ prnt/hpcups/Hbpl1.cpp          | 2 +-
+ prnt/hpcups/LJZjStream.cpp     | 2 +-
+ prnt/hpcups/ModeJbig.cpp       | 2 +-
+ prnt/hpcups/ModeJpeg.cpp       | 2 +-
+ prnt/hpcups/SystemServices.cpp | 2 +-
+ prnt/hpcups/Utils.cpp          | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/prnt/hpcups/HPCupsFilter.cpp b/prnt/hpcups/HPCupsFilter.cpp
+index c46ac8a..2197dd0 100644
+--- a/prnt/hpcups/HPCupsFilter.cpp
++++ b/prnt/hpcups/HPCupsFilter.cpp
+@@ -40,7 +40,7 @@
+ #include <sys/wait.h>
+ #include <sys/utsname.h>
+ #include <time.h>
+-#include "utils.h"
++#include "../../common/utils.h"
+ 
+ #define HP_FILE_VERSION_STR    "03.09.08.0"
+ 
+diff --git a/prnt/hpcups/Hbpl1.cpp b/prnt/hpcups/Hbpl1.cpp
+index d25b361..42c1dc2 100644
+--- a/prnt/hpcups/Hbpl1.cpp
++++ b/prnt/hpcups/Hbpl1.cpp
+@@ -35,7 +35,7 @@
+ 
+ #include <dlfcn.h>
+ #include "Hbpl1.h"
+-#include "utils.h"
++#include "../../common/utils.h"
+ #define ZJC_BAND_HEIGHT    100
+ #define ON 1
+ #define OFF 0
+diff --git a/prnt/hpcups/LJZjStream.cpp b/prnt/hpcups/LJZjStream.cpp
+index 9b06cf8..bbeb7ed 100644
+--- a/prnt/hpcups/LJZjStream.cpp
++++ b/prnt/hpcups/LJZjStream.cpp
+@@ -42,7 +42,7 @@
+ #include "LJZjStream.h"
+ #include "Utils.h"
+ #include "hpjbig_wrapper.h"
+-#include "utils.h"
++#include "../../common/utils.h"
+ 
+ #define ZJC_BAND_HEIGHT    100
+ 
+diff --git a/prnt/hpcups/ModeJbig.cpp b/prnt/hpcups/ModeJbig.cpp
+index 9a19312..8b81cea 100644
+--- a/prnt/hpcups/ModeJbig.cpp
++++ b/prnt/hpcups/ModeJbig.cpp
+@@ -37,7 +37,7 @@
+ #include "hpjbig_wrapper.h"
+ #include <dlfcn.h>
+ #include "Utils.h"
+-#include "utils.h"
++#include "../../common/utils.h"
+ 
+ extern "C"
+ {
+diff --git a/prnt/hpcups/ModeJpeg.cpp b/prnt/hpcups/ModeJpeg.cpp
+index 378d094..0b444b9 100644
+--- a/prnt/hpcups/ModeJpeg.cpp
++++ b/prnt/hpcups/ModeJpeg.cpp
+@@ -33,7 +33,7 @@
+ #include "ModeJpeg.h"
+ #include <dlfcn.h>
+ #include "Utils.h"
+-#include "utils.h"
++#include "../../common/utils.h"
+ 
+ #define MAX_JPEG_FILE_SIZE 2097152    // 2 Mgabytes
+ 
+diff --git a/prnt/hpcups/SystemServices.cpp b/prnt/hpcups/SystemServices.cpp
+index f227837..bc864e3 100644
+--- a/prnt/hpcups/SystemServices.cpp
++++ b/prnt/hpcups/SystemServices.cpp
+@@ -30,7 +30,7 @@
+ 
+ #include "CommonDefinitions.h"
+ #include "SystemServices.h"
+-#include "utils.h"
++#include "../../common/utils.h"
+ 
+ SystemServices::SystemServices(int iLogLevel, int job_id, char* user_name) : m_iLogLevel(iLogLevel)
+ {
+diff --git a/prnt/hpcups/Utils.cpp b/prnt/hpcups/Utils.cpp
+index 2432aec..ed79d8b 100644
+--- a/prnt/hpcups/Utils.cpp
++++ b/prnt/hpcups/Utils.cpp
+@@ -29,7 +29,7 @@
+ \*****************************************************************************/
+ 
+ #include "CommonDefinitions.h"
+-#include "utils.h"
++#include "../../common/utils.h"
+ 
+ int SendChunkHeader (BYTE *szStr, DWORD dwSize, DWORD dwChunkType, DWORD dwNumItems)
+ {
